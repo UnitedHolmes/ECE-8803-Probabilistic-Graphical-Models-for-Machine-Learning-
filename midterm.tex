@@ -1,0 +1,83 @@
+\documentclass[11pt]{article}
+%\usepackage{fontspec}
+\usepackage{ amssymb }
+\usepackage{longtable}
+\usepackage{amsmath}
+%\usepackage[utf8]{inputenc}
+\author{Raghav Kuppan}
+\title{Project Proposal}
+\begin{document}
+
+\begin{center}
+\textbf{\Large Learning the structure of a Markov Random Field}
+\end{center}
+
+\begin{center}
+Lee Richert (ECE), Raghav Kuppan (ECE), Yuanda Zhu (ECE)
+\end{center}
+
+
+
+\section{Abstract}
+Learning the structure of a Markov Random Field from independent and identically distributed samples is an important problem. Unfortunately, calculation of the partition function is intractable for most graphs. Trace Lasso regularization of a pseudo-likelihood has been proposed as a means of learning the structure of probabilistic graphical models from samples. The Trace Lasso exhibits less volatility in response to correlation between random variables than Lasso while also promoting sparsity. We plan to adapt Trace Lasso for the purpose of learning the structure of a Markov Random field, using a maximum pseudo-likelihood approach.
+
+\section{Introduction}
+In many modern applications, the number of observations is much less than the number of features. In the case of graphical models, the number of features is the number of nodes in the graph. When the number of nodes exceeds the number of samples, finding a consistent estimator is difficult owing to the intractability of the partition function calculation. One problem of interest is that of model selection for Ising models. Ising models are a special case of pairwise Markov Random fields. In an Ising model, the full conditional distributions of each variable form logistic regression models, and variable selection techniques for regression are able to identify the neighborhood of each node and, thus, the entire graph. Prior work on this has involved solving this problem or a variant of this problem using a pseudo-likelihood approach with $\ell_1$-regularization ~\cite{ravikumar2010high} or conditional variational distance thresholding~\cite{anandkumar2012high}.\\
+
+Alternate methods of regularization have been developed in recent years to promote sparsity. Among sparsity inducing norms, the $\ell_1$ norm is the simplest and most widely used, leading to the Lasso when used in a least-squares framework. While the Lasso does well in high-dimensional settings, it is known to have stability problems in situations where the data exhibit strong correlation structures. Several solutions have been proposed which include the Elastic net, group Lasso and Sampling techniques. However these norms cannot just be plugged into the objective function as extra information is usually required, or in some cases, the problem is further complicated due to the addition of parameters to be estimated. The Trace norm takes into account the correlation structure of the data but does not require manual human intervention. It can be thought of as a way of turning the rank of a matrix into a norm. The Trace norm is adaptive and requires that only a single regularization parameter be chosen. 	
+
+\section{Prior Work on Model Selection}
+Ravikumar et. al ~\cite{ravikumar2010high} study the problem of signed edge recovery on Ising models and establish sufficient conditions on the sample size $n$, dimension $p$, and maximum neighborhood size $d$, to get a consistent estimator.In a high dimensional setting, both $p$ and $d$ grow as a function of $n$. With this assumption, the structure of any bounded degree graph can be recovered with high probability once $n/log(p)$ is sufficiently large. This way, the signed neighborhood of every node can be estimated by optimizing a log pseudo-likelihood function with an $\ell_1$ penalty. This way the entire set of signed edges of the graph can be recovered whereby the structure of the Ising model has been found. This technique is demonstrated on four-nearest neighbor lattices, eight-nearest neighbor lattices and a star graph as well as on a class of graphs with unbounded maximum neighborhood size, with the results being consistent with the theoretical conjectures. Methods to generalize the technique to any discrete pairwise Markov random field are discussed.\\
+
+Unlike the Ravikumar et. al method described above and our proposed approach, the conditiona variational distance thresholding algorithm (CVDT) \cite{anandkumar2012high} does not use a pseudo-likelihood approach.  Instead, it uses the conditional variational distance as an indicator of dependence. In addition to conditions requiring sufficient samples and some graph-family-specific bounds on edge potentials, the CVDT also requires that the graph structure meet a $(\eta,\gamma)$-local seperation property: for every pair of nodes, there exists a set $S: |S| \leq \eta$ of cardinality less than or equal to $\eta$ such that in the graph $G' = G\S$, $d(X_i,X_j) > \gamma$. $\eta$ is a hyperparameter used in the algorithm, and $\gamma$ is required to be at least on the order of $\log(\log(p))$ where $p$ is the number of nodes in the graph. Details of sufficient requirements for recovery of graph structure can be found in ~\cite{anandkumar2012high}.
+
+The CVDT algorithm considers each pair of nodes $X_i,X_j$ to determine whether the edge between them should be included.  The edge is included if there does not exist an assignment of values for any subset $S \subseteq X\\\{X_i,X_j\}$ with $|S| \leq \eta$ such that the probability mass function for $X_i$ does not sufficiently change when conditioned on different values of $X_j$.
+
+
+Checking all potential value assignments for all subsets $\{S_i\}$ grows exponentially with the size of $\eta$, so to be computationally feasible, $\eta$ cannot be large. 
+
+
+
+
+\section{Prior Work on Regularization}
+
+Regularization as well as variable selection plays a major role in linear regression. A large number of proposals are made to overcome the limitation of least square regression. The early milestone in this area is ridge regression ~\cite{AEHoerl1970ridge}. Subjected to a $\ell_2$ penalty, ridge regression aims to minimize the sum of squared error. and achieves better performance through the bias-variance trade-off. However, the main drawback is that it is not a parsimonious model; it simply keeps all predictors in the model. 
+\\ \\
+Another popular algorithm, Lasso ~\cite{tibshirani1996regression}, was proposed in 1996. By incorporating the $\ell_1$-norm for regularization, Lasso performs optimally in high-dimensional, low-correlated settings, in terms of both prediction and parameter estimation. Unlike ridge regression, Lasso does have sparse representation. People have figured out that, nevertheless, Lasso performs poorly under three conditions:
+
+\begin{enumerate} 
+
+\item
+
+Let $p$ represent the number of features and $n$ represent the number of observations. For $p>n$, Lasso selects at most $n$ variables before it saturates; besides, Lasso is not well defined unless the bound on $\ell_1$-norm of the coefficients is smaller than a certain value.
+\item
+
+For a group of variables whose pairwise correlations are very high, Lasso tends to select only one variable and does not care which one is selected.
+
+\item
+
+ For $n>p$ case, when predictors have high correlations, the prediction performance of Lasso is dominated by ridge regression.\\ \\
+
+\end{enumerate}
+
+In order to address the third problem of Lasso, elastic net ~\cite{Zou2005Reg} was proposed in 2005 by adding the squared $\ell_2$ norm, a strongly convex penalty term to the $\ell_1$ norm in Lasso. Elastic net performs similarly to Lasso in scenario 1) and 2), but by encouraging grouping effect, has higher accuracy than Lasso in scenario 3). To be more specific, in scenario 3), some features are highly correlated with each other and are associated with response; thus elastic net aims to perform less shrinkage on those subsets of features. In addition, similar to Lasso, elastic net does both continuous shrinkage and automatic variable selection. Ridge regression has only continuous shrinkage but no automatic variable selection.\\
+
+Group Lasso ~\cite{Francis2008Con} is another approach to implement the grouping effect to Lasso. Group Lasso divides predictors into group and penalizes the sum of $\ell_2$ norm. The basic assumption of group Lasso is that there are distinct groups or clusters among variables and these groups are known a priori; it uses $\ell_2$ penalty on coefficients within each of K known and non-overlapping groups. However knowing the groups in advance is not always possible.\\
+
+On top of group Lasso and elastic net, clustering algorithms can be used. Cluster group Lasso ~\cite{Peter2013Cor} seeks sets of correlated features with similar associations with the response. The idea is to first identify groups among features using hierarchical clustering and then apply Group Lasso. The basic assumption is that all correlated features have similar association with response. If this assumption fails to hold so that not all correlated features have a similar association with the response, then cluster elastic net (CEN) ~\cite{Dan2014The} would show its advantage since CEN seeks sets of correlated features with similar associations with the response. Besides, while elastic net shrinks all coefficients towards the origin, CEN selectively shrinks coefficients for highly-correlated variables towards each other.
+
+\section{Approach}
+Our approach is to adopt the maximum psuedo-likelihood approach as in~\cite{ravikumar2010high} but with the trace norm as our regularization parameter. The signed neighborhood of one node will be estimated by evaluating the conditional distribution of the node conditioned on all the other nodes and then maximizing this with a trace norm penalty. Computing the subgradient of the trace norm is reported to be inefficient and the rate of convergence very slow, so a variational formulation for the trace norm~\cite{grave2011trace} will be used. The ensuing cost function can be optimized using a Conjugated Gradients method. \\ \\ 
+ 
+\subsection{Approach for Evaluating Performance}
+To test different approaches for the ising-selection problem, we will first generate sythetic data. Data samples can be generated from a known probabilistic graphical model using Gibbs sampling. Samples drawn from different runs after sufficient burn time will be independent and identically distributed.  From these samples, we can use structural learning algorithms described in prior research and our proposed methods to learn a new graphical model, which can be directly compared with the known model for accuracy. We plan to evaluate the algorithms by counting the number of edges whose sign is recovered correctly.
+$$\operatorname{sign}(\theta_i) = \begin{cases} 1 & \theta_i > 0\\ 0 & \theta_i = 0 \\ -1 & \theta_i < 0 \end{cases}$$
+
+On real data for which the generating graphical model is unknown, we can evaluate algorithms by measuring the likelihood on a hold-out set.
+
+
+\bibliography{citation}{}
+\bibliographystyle{plain}
+
+\end{document}
+

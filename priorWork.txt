@@ -1,0 +1,12 @@
+Prime Techniques:
+LASSO Ising
+BIC  (assigned to Lee)
+LSC  (assigned to Lee)
+
+Building our approach:
+Trace LASSO
+Elastic Net
+Group LASSO (requires prior knowlege of groups)
+Clustered Elastic Net (learns priors for group lasso)
+
+Other regularization

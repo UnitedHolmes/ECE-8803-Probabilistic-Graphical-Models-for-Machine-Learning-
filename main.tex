@@ -1,0 +1,16 @@
+\documentclass{article}
+%\usepackage{graphicx}
+\usepackage{fontspec}
+\usepackage{ amssymb }
+%\setmainfont{Code2000}
+\usepackage{amsmath}
+\usepackage[utf8]{inputenc}
+\begin{document}
+
+\textbf{Group members}: Raghav Kuppan (ECE), Holmes Yuanda Zhu (ECE), and Lee Richert (ECE)\\
+
+\textbf{Task}: Trace LASSO regularization~\cite{grave2011trace} exhibits less volatility in response to correlation between random variables than LASSO~\cite{tibshirani1996regression}.  We plan to adapt Trace LASSO for the purpose of learning the structure of a Markov Random field, using an otherwise similar approach to that published in Ravikumar et. al ~\cite{ravikumar2010high}. We will test our code on synthetic data generated through Gibbs sampling of Markov random fields. This will allow us to directly measure performance based on whether or not recovered edges match the edges of the generating model and whether or not recovered model coefficients match generating model coefficients in sign.  Additionally, we will run our code on United States congressional house representative voting records from 1984~\cite{schlimmer1987concept} found through the UCI Machine Learning Repository~\cite{bache2013uci}. We will devise an appropriate measure to assess performance; currently, we are considering measuring likelihood on a hold-out set. On both sets, we will compare results with other approaches, such as the LASSO  (without adjustments to account for correlated random variables), preclustering (an alternative approach to handling LASSO's sensitivity to correlated variables), and elastic net. This task is the suggested course project number 31.\\
+\bibliography{citation}{}
+\bibliographystyle{plain}
+
+\end{document}
